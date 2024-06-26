@@ -6,10 +6,10 @@ import copy
 pygame.init()   # Iniciar pygame
 
 # Carga de imágenes y configuración de la ventana
-background_image = pygame.image.load('cubico.jpg')    # Cargar imagen
+background_image = pygame.image.load('image/cubico.jpg')    # Cargar imagen
 background_image = pygame.transform.scale(background_image, (1000, 600))
 
-imagen_cuadro = pygame.image.load('images_roca.jpg')
+imagen_cuadro = pygame.image.load('image/images_roca.jpg')
 imagen_cuadro = pygame.transform.scale(imagen_cuadro, (193, 193))
 
 win = pygame.display.set_mode((1000, 600))
