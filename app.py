@@ -3,13 +3,13 @@ import time
 from queue import PriorityQueue
 import copy
 
-pygame.init()   # Iniciar pygame
+pygame.init()  # Iniciar pygame
 
 # Carga de imágenes y configuración de la ventana
-background_image = pygame.image.load('image/cubico.jpg')    # Cargar imagen
+background_image = pygame.image.load("image/cubico.jpg")  # Cargar imagen
 background_image = pygame.transform.scale(background_image, (1000, 600))
 
-imagen_cuadro = pygame.image.load('image/images_roca.jpg')
+imagen_cuadro = pygame.image.load("image/images_roca.jpg")
 imagen_cuadro = pygame.transform.scale(imagen_cuadro, (193, 193))
 
 win = pygame.display.set_mode((1000, 600))
@@ -17,18 +17,18 @@ pygame.display.set_caption("Solución de Puzzle 3x3")
 
 # Diccionario de colores y configuración de colores específicos
 color_dict = {
-    1: (255, 0, 0),     # Rojo
-    2: (0, 0, 255),     # Azul
-    3: (255, 255, 0),   # Amarillo
-    4: (255, 0, 255),   # Magenta
-    5: (255, 165, 0),   # Naranja
-    6: (0, 128, 0),     # Verde
-    7: (128, 128, 128), # Gris 
-    8: (128, 0, 128),   # Morado 
-    9: (0, 0, 0)        # Negro
+    1: (255, 0, 0),  # Rojo
+    2: (0, 0, 255),  # Azul
+    3: (255, 255, 0),  # Amarillo
+    4: (255, 0, 255),  # Magenta
+    5: (255, 165, 0),  # Naranja
+    6: (0, 128, 0),  # Verde
+    7: (128, 128, 128),  # Gris
+    8: (128, 0, 128),  # Morado
+    9: (0, 0, 0),  # Negro
 }
 
-line_color = (192, 192, 192) # Color de las letras
+line_color = (192, 192, 192)  # Color de las letras
 line_color2 = (0, 255, 255)  # Color celeste fosforescente números
 
 line_width = 20
@@ -36,8 +36,8 @@ width = 185
 height = 185
 vel = 2  # Velocidad de movimientos
 
-default_font = pygame.font.Font('fonts/faster_stroker/Faster Stroker.otf', 80)
-default_font2 = pygame.font.Font('fonts/faster_stroker/Faster Stroker.otf', 35)
+default_font = pygame.font.Font("fonts/faster_stroker/Faster Stroker.otf", 80)
+default_font2 = pygame.font.Font("fonts/faster_stroker/Faster Stroker.otf", 35)
 
 solved_moves = {}
 
@@ -59,8 +59,21 @@ positions = {}
 total_moves = 0
 initial = copy.deepcopy(board)
 
+
 class Button:
-    def __init__(self, color, x, y, width, height, font_size, text='',  image=None, visible=True, corner_radius=10):
+    def __init__(
+        self,
+        color,
+        x,
+        y,
+        width,
+        height,
+        font_size,
+        text="",
+        image=None,
+        visible=True,
+        corner_radius=10,
+    ):
         self.color = color
         self.x = x
         self.y = y
@@ -73,14 +86,32 @@ class Button:
 
     def draw(self, win, outline=None):  # Lineas de separación entre botones
         if outline:
-            pygame.draw.rect(win, outline, (self.x-2, self.y-2, self.width+4, self.height+4), border_radius=self.corner_radius)
+            pygame.draw.rect(
+                win,
+                outline,
+                (self.x - 2, self.y - 2, self.width + 4, self.height + 4),
+                border_radius=self.corner_radius,
+            )
 
-        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), border_radius=self.corner_radius)
-   
-        if self.text != '':   # Centrar texto de botones
-            button_font = pygame.font.Font('fonts/faster_stroker/Faster Stroker.otf', self.font_size)   #Fuente de los botones
-            text = button_font.render(self.text, True, (0,0,0))
-            win.blit(text, (self.x + (self.width/2 - text.get_width()/2), self.y + (self.height/2 - text.get_height()/2)))
+        pygame.draw.rect(
+            win,
+            self.color,
+            (self.x, self.y, self.width, self.height),
+            border_radius=self.corner_radius,
+        )
+
+        if self.text != "":  # Centrar texto de botones
+            button_font = pygame.font.Font(
+                "fonts/faster_stroker/Faster Stroker.otf", self.font_size
+            )  # Fuente de los botones
+            text = button_font.render(self.text, True, (0, 0, 0))
+            win.blit(
+                text,
+                (
+                    self.x + (self.width / 2 - text.get_width() / 2),
+                    self.y + (self.height / 2 - text.get_height() / 2),
+                ),
+            )
 
     def isOver(self, pos):  # Verifica clic en boton
         if self.x < pos[0] < self.x + self.width:
@@ -89,57 +120,67 @@ class Button:
 
         return False
 
-# Tamaño de letra botones
-button1 = Button((144, 238, 144), 675, 110, 250, 100, 40, "Resolver", corner_radius=20) 
-button2 = Button((144, 238, 144), 675, 270, 250, 100, 40, "Reiniciar", corner_radius=20 )
 
-def show_score():   # Muestra total de movimientos
-    score = default_font2.render("Movimientos: " + str(total_moves), True, color_dict[1])
+# Tamaño de letra botones
+button1 = Button((144, 238, 144), 675, 110, 250, 100, 40, "Resolver", corner_radius=20)
+button2 = Button((144, 238, 144), 675, 270, 250, 100, 40, "Reiniciar", corner_radius=20)
+
+
+def show_score():  # Muestra total de movimientos
+    score = default_font2.render(
+        "Movimientos: " + str(total_moves), True, color_dict[1]
+    )
     win.blit(score, (645, 435))
 
-def find_nums(board): # Traslada los números en la variable 'board' a las posiciones de los números en el tablero del programa
-    for n in range(0,9):
-        for i in range(len(board)):  
-            for j in range(len(board[0])): 
+
+def find_nums(
+    board,
+):  # Traslada los números en la variable 'board' a las posiciones de los números en el tablero del programa
+    for n in range(0, 9):
+        for i in range(len(board)):
+            for j in range(len(board[0])):
                 if board[i][j] == n:
                     if i == 0:
-                        positions["y%s" %n] = 7   
+                        positions["y%s" % n] = 7
                     if i == 1:
-                        positions["y%s" %n] = 205
+                        positions["y%s" % n] = 205
                     if i == 2:
-                        positions["y%s" %n] = 403
+                        positions["y%s" % n] = 403
                     if j == 0:
-                        positions["x%s" %n] = 7  
+                        positions["x%s" % n] = 7
                     if j == 1:
-                        positions["x%s" %n] = 205
+                        positions["x%s" % n] = 205
                     if j == 2:
-                        positions["x%s" %n] = 403
+                        positions["x%s" % n] = 403
+
 
 def translate_board():  # Traslada los números en el tablero del programa a la variable 'board'
-    for n in range(0,9):
-        if positions["y%s" %n] == 7:
+    for n in range(0, 9):
+        if positions["y%s" % n] == 7:
             i = 0
-        if positions["y%s" %n] == 205:
+        if positions["y%s" % n] == 205:
             i = 1
-        if positions["y%s" %n] == 403:
+        if positions["y%s" % n] == 403:
             i = 2
-        if positions["x%s" %n] == 7:
+        if positions["x%s" % n] == 7:
             j = 0
-        if positions["x%s" %n] == 205:
+        if positions["x%s" % n] == 205:
             j = 1
-        if positions["x%s" %n] == 403:
+        if positions["x%s" % n] == 403:
             j = 2
         board[i][j] = n
-        find_nums(board)  
+        find_nums(board)
+
 
 # Dibuja la cuadrícula del tablero
 def grid():
     pygame.draw.rect(win, color_dict[9], (3, 3, 594, 594), border_radius=10)
-    for y in range(3, 600, 198): # Dibujar líneas horizontales
+    for y in range(3, 600, 198):  # Dibujar líneas horizontales
         pygame.draw.line(win, line_color, (0, y), (598, y), line_width)
 
-    for x in range(3, 600, 198): # Dibujar líneas verticales
+    for x in range(3, 600, 198):  # Dibujar líneas verticales
         pygame.draw.line(win, line_color, (x, 0), (x, 600), line_width)
+
 
 # Redibuja la ventana con el tablero actualizado
 def redraw_window():
@@ -147,7 +188,9 @@ def redraw_window():
     grid()
 
     for n in range(1, 9):
-        pygame.draw.rect(win, color_dict[n], (positions[f"x{n}"], positions[f"y{n}"], width, height))
+        pygame.draw.rect(
+            win, color_dict[n], (positions[f"x{n}"], positions[f"y{n}"], width, height)
+        )
         num = default_font.render(str(n), True, line_color2)
         win.blit(num, (positions[f"x{n}"] + 80, positions[f"y{n}"] + 35))
 
@@ -156,14 +199,15 @@ def redraw_window():
     button2.draw(win, (255, 255, 255))
     pygame.display.update()
 
-grid()
-count = 0   # Contador del algoritmo de búsqueda 
 
-find_nums(board) 
-running = True  
+grid()
+count = 0  # Contador del algoritmo de búsqueda
+
+find_nums(board)
+running = True
 
 while running:
-    translate_board() 
+    translate_board()
     for event in pygame.event.get():
         pos = pygame.mouse.get_pos()
         if event.type == pygame.QUIT:
@@ -171,7 +215,7 @@ while running:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if button1.isOver(pos):  # Clic en el boton "Resolver"
-                button1.color = (255,0,0)
+                button1.color = (255, 0, 0)
                 button1.text = "Buscando"
 
                 total_moves = 0
@@ -182,7 +226,12 @@ while running:
 
                 def is_solvable(board):
                     flat_board = [num for row in board for num in row if num != 0]
-                    inversions = sum(1 for i in range(len(flat_board) - 1) for j in range(i + 1, len(flat_board)) if flat_board[i] > flat_board[j])
+                    inversions = sum(
+                        1
+                        for i in range(len(flat_board) - 1)
+                        for j in range(i + 1, len(flat_board))
+                        if flat_board[i] > flat_board[j]
+                    )
                     return inversions % 2 == 0
 
                 def backtrack(n1):
@@ -208,7 +257,7 @@ while running:
                                 if current == came_from["previous_node0"]:
                                     return g_score
                                 break
-                            
+
                 def distance():
                     man = 0
                     for i in range(1, 9):
@@ -253,14 +302,16 @@ while running:
                     i, j = find(board, 0)
                     board[i][j], board[i + 1][j] = board[i + 1][j], board[i][j]
                     return board
-                
+
                 class Node:
                     def __init__(self, position, f_score):
                         self.position = position
                         self.f_score = f_score
 
                 def in_closed(n1):
-                    return n1 == closed_set.get("start", None) or n1 in closed_set.values()
+                    return (
+                        n1 == closed_set.get("start", None) or n1 in closed_set.values()
+                    )
 
                 n1 = Node(board, distance())
                 open_set = PriorityQueue()
@@ -280,7 +331,9 @@ while running:
                                 left()
                             if not in_closed(n1.position):
                                 nodes["node%s" % count] = n1.position
-                                came_from["previous_node%s" % count] = copy.deepcopy(left())
+                                came_from["previous_node%s" % count] = copy.deepcopy(
+                                    left()
+                                )
                                 n1.position = copy.deepcopy(right())
                                 h_score = distance()
                                 n1.f_score = h_score + backtrack(n1.position)
@@ -294,7 +347,9 @@ while running:
                                 right()
                             if not in_closed(n1.position):
                                 nodes["node%s" % count] = n1.position
-                                came_from["previous_node%s" % count] = copy.deepcopy(right())
+                                came_from["previous_node%s" % count] = copy.deepcopy(
+                                    right()
+                                )
                                 n1.position = copy.deepcopy(left())
                                 h_score = distance()
                                 n1.f_score = h_score + backtrack(n1.position)
@@ -308,7 +363,9 @@ while running:
                                 down()
                             if not in_closed(n1.position):
                                 nodes["node%s" % count] = n1.position
-                                came_from["previous_node%s" % count] = copy.deepcopy(down())
+                                came_from["previous_node%s" % count] = copy.deepcopy(
+                                    down()
+                                )
                                 n1.position = copy.deepcopy(up())
                                 h_score = distance()
                                 n1.f_score = h_score + backtrack(n1.position)
@@ -322,7 +379,9 @@ while running:
                                 up()
                             if not in_closed(n1.position):
                                 nodes["node%s" % count] = n1.position
-                                came_from["previous_node%s" % count] = copy.deepcopy(up())
+                                came_from["previous_node%s" % count] = copy.deepcopy(
+                                    up()
+                                )
                                 n1.position = copy.deepcopy(down())
                                 h_score = distance()
                                 n1.f_score = h_score + backtrack(n1.position)
@@ -332,7 +391,7 @@ while running:
 
                         next_item = open_set.get()[3]
                         board = copy.deepcopy(next_item)
-                        find_nums(board)  
+                        find_nums(board)
                         redraw_window()
 
                         if board == board_solved:
@@ -346,9 +405,9 @@ while running:
                     print(str(len(closed_set)) + " nodos explorados")
                     print(str(len(nodes)) + " total de nodos")
                     total_moves = 0
-                    for n in range(0, len(solved_moves)):  
-                        pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)  
-                        time.sleep(1)  
+                    for n in range(0, len(solved_moves)):
+                        pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
+                        time.sleep(1)
                         find_nums(solved_moves["move%s" % (len(solved_moves) - n - 1)])
                         redraw_window()
                         if n != len(solved_moves) - 1:
@@ -358,16 +417,16 @@ while running:
                     button1.text = "Resolver"
                     pygame.event.set_allowed(pygame.MOUSEBUTTONDOWN)
             else:
-                button1.color = (0,255,0)
+                button1.color = (0, 255, 0)
                 button1.text = "Resolver"
 
             if button2.isOver(pos):  # Reinicia el tablero a la posición inicial
-                button2.color = (255,0,0)
+                button2.color = (255, 0, 0)
                 board = copy.deepcopy(initial)
                 find_nums(board)
                 redraw_window()
-                button2.color = (0,255,0)
-                total_moves = 0      
+                button2.color = (0, 255, 0)
+                total_moves = 0
                 initial = copy.deepcopy(board)
 
     keys = pygame.key.get_pressed()
